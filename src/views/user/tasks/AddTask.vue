@@ -33,33 +33,43 @@
                             class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
                 </div>
 
+   
+
+
                 <!-- Content Row -->
-                <form @submit.prevent="updateProject">
+                <form @submit.prevent="create">
                     <div class="mb-3">
-                      <label for="projectName" class="form-label">Project Name</label>
-                      <input type="text" class="form-control" id="projectName" v-model="name" aria-describedby="emailHelp" >
+                      <label for="projectName" class="form-label">Title</label>
+                      <input type="text" class="form-control" id="projectName" v-model="title" aria-describedby="emailHelp" required>
                     </div>
                     <div class="mb-3">
                       <label for="projectDescription" class="form-label">Description</label>
-                      <textarea class="form-control" id="projectDescription" v-model="details" ></textarea>
+                      <textarea class="form-control" id="projectDescription" v-model="description" required></textarea>
                     </div>
 
                     <div class="mb-3">
-                      <label for="projectTime" class="form-label">Time</label>
-                      <input type="text" class="form-control" id="projectTime" v-model="hour" >
+                      <label for="projectTime" class="form-label">Priority</label>
+                      <input type="text" class="form-control" id="projectTime" v-model="priority" required>
                     </div>
+
+                    <div class="mb-3">
+                      <label for="projectTime" class="form-label">Work Hour</label>
+                      <input type="text" class="form-control" id="projectTime" v-model="hour" required>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="projectTime" class="form-label">Status</label>
+                      <input type="text" class="form-control" id="projectTime" v-model="status" required>
+                    </div>
+
+
 
                     <button type="submit" class="btn btn-primary">Create</button>
                   </form>
-                
 
+              
             </div>
-            <!-- /.container-fluid -->
-
-
-
-            
-
+            <!-- /.container-fluid --> 
         </div>
         <!-- End of Main Content -->
 
@@ -97,10 +107,11 @@ import '../../../assets/dashboard/js/sb-admin-2.min.js'
 </script>
 
 
-
- <script>
-import { useRouter } from 'vue-router';
+<script>
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import axios from 'axios';
+
 function getTokenFromCookie() {
   const cookies = document.cookie.split(';');
   for (let i = 0; i < cookies.length; i++) {
@@ -112,47 +123,48 @@ function getTokenFromCookie() {
   return null;
 }
 
-// Usage
-const token = getTokenFromCookie();
-
-
-
-
 export default {
   data() {
+    const route = useRoute();
+    const projectId = route.params.id;
+
     return {
-      name: '',
-      details: '',
+      projectId,
+      title: '',
+      description: '',
+      priority: '',
       hour: '',
+      status: '',
     };
   },
-  
   methods: {
-    
-    
-    
-    updateProject(projectId) {
+    create() {
+      const token = getTokenFromCookie();
       const headers = {
         'Content-Type': 'application/json',
-        Authorization: `Bearer `+token,
+        Authorization: 'Bearer ' + token,
       };
 
       axios
-        .put(`http://localhost:9000/projects/${projectId}`, {
-          name: this.name,
-          details: this.details,
+        .post(`http://localhost:9000/tasks/${this.projectId}`, {
+          title: this.title,
+          description: this.description,
+          priority: this.priority,
           hour: this.hour,
+          status: this.status,
         }, { headers })
         .then(response => {
-          console.log('Project updated successfully', response.data);
-          this.$router.push('/all-projects');
+          console.log('Task created successfully', response.data);
+          // Handle success, e.g., show a success message or redirect
+          this.$router.replace(`/single-page/${this.projectId}`);
+
 
         })
         .catch(error => {
-          console.error('Error updating project', error.response.data);
+          console.error('Error creating task', error.response.data);
           // Handle error, e.g., display an error message
         });
     },
   },
 };
-</script>  
+</script>

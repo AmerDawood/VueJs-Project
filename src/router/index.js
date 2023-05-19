@@ -10,6 +10,8 @@ import ContactView from "../views/website/Contact.vue";
 import AllProjects from "../views/user/project/AllProjects.vue"
 import AddProjects from "../views/user/project/AddProjects.vue"
 import UpdateProjects from "../views/user/project/UpdateProject.vue"
+import AddTask from "../views/user/tasks/AddTask.vue"
+
 
 
 const router = createRouter({
@@ -38,7 +40,7 @@ const router = createRouter({
     },
 
     {
-      path: "/single-page",
+      path: "/single-page/:id",
       name: "Single Page",
       component: SinglePageVue,
     },
@@ -69,11 +71,20 @@ const router = createRouter({
 
 
     {
-      path: "/update-projects",
+      path: "/update-projects/:id",
       name: "UpdateProjects",
       component: UpdateProjects,
     },
+
+
+    {
+      path: "/add-task/:id",
+      name: "AddTask",
+      component: AddTask,
+    },
   ],
+
+ 
 });
 
 export default router;

@@ -81,10 +81,6 @@ import '../../assets/auth/style.css';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
-// Function to store the token in local storage
-const setToken = (token) => {
-  localStorage.setItem('token', token);
-};
 
 export default {
   data() {
@@ -101,8 +97,16 @@ export default {
       })
       .then(response => {
         console.log('Login successful', response.data);
+
+        
+              const expirationDate = new Date();
+expirationDate.setDate(expirationDate.getDate() + 7); // Set the expiration to 7 days from now
+
+document.cookie = `${response.data.token}`;
+
+        
+
         // Store the token
-        setToken(response.data.token);
         // Redirect to the user dashboard
         this.$router.push('/user-dashboard');
       })

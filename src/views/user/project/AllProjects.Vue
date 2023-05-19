@@ -33,10 +33,11 @@
                         <thead>
                           <tr>
                             <th>Name</th>
-                            <th>Description</th>
-                            <th>Hour Price</th>
-                            <th>Price</th>
-                            <th>Status</th>
+                            <th>Description</th>  
+                            <th>hour</th>  
+                            <th>More Details</th>
+
+
                             <th>Update</th>
                             <th>Delete</th>
                           </tr>
@@ -46,14 +47,16 @@
                           <!-- Loop over projects and generate rows dynamically -->
                           <tr v-for="project in projects" :key="project.id">
                             <td>{{ project.name }}</td>
-                            <td>{{ project.description }}</td>
-                            <td>{{ project.hourPrice }}</td>
-                            <td>{{ project.price }}</td>
-                            <td>{{ project.status }}</td>
+                            <td>{{ project.details }}</td>
+                            <td>{{ project.hour }}</td>
                             <td v-if="project.isFound">
-                              <RouterLink :to="'/update-projects/' + project.id" class="collapse-item">Update</RouterLink>
+                              <RouterLink :to="'/single-page/' + project._id" class="collapse-item">Details</RouterLink>
                             </td>
-                            <td v-if="project.isFound"><a href="">Delete</a></td>
+                            <td v-if="project.isFound">
+                              <RouterLink :to="'/update-projects/' + project._id" class="collapse-item">Update</RouterLink>
+                            </td>
+                            <td v-if="project.isFound"><a href="" @click="deleteProject(project._id)">Delete</a></td>
+
                           </tr>
                         </tbody>
                       </table>
@@ -82,19 +85,73 @@ const projects = ref([]);
 // Fetch projects data from the server
 async function fetchProjects() {
   try {
-    const token = localStorage.getItem('token');
-    console.log(token);
+    // const token = localStorage.getItem('token');
+    
+     function getTokenFromCookie() {
+  const cookies = document.cookie.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].trim();
+    if (cookie.startsWith('token=')) {
+      return cookie.substring('token='.length, cookie.length);
+    }
+  }
+  return null;
+}
+
+// Usage
+const token = getTokenFromCookie();
+console.log(token);
+        const headers = {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        };
+    console.log(headers);
+    
+
 
     // Get the projects using the token in the request headers
     const response = await axios.get('http://localhost:9000/projects/all', {
+      headers: {
+        Authorization: `Bearer `+token,
+      },
+    });
+
+
+    console.log(response);
+
+    projects.value = response.data.map(project => ({ ...project, isFound: true }));
+  } catch (error) {
+    // console.error(error);
+  }
+}
+
+// Delete a project
+async function deleteProject(projectId) {
+  try {
+    function getTokenFromCookie() {
+  const cookies = document.cookie.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].trim();
+    if (cookie.startsWith('token=')) {
+      return cookie.substring('token='.length, cookie.length);
+    }
+  }
+  return null;
+}
+
+// Usage
+const token = getTokenFromCookie();    
+    // Make a DELETE request to the server with the project ID and token in the request headers
+    await axios.delete(`http://localhost:9000/projects/${projectId}`,{
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
-    projects.value = response.data.map(project => ({ ...project, isFound: true }));
+    // Remove the deleted project from the projects list
+    projects.value = projects.value.filter(project => project._id !== projectId);
   } catch (error) {
-    // console.error(error);
+    // Handle the error, e.g., display an error message or log the error
   }
 }
 

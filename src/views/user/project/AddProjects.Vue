@@ -37,37 +37,25 @@
 
 
                 <!-- Content Row -->
-                <form>
-  <div class="mb-3">
-    <label for="exampleInputEmail1" class="form-label">Project Name</label>
-    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-  </div>
-  <div class="mb-3">
-    <label for="exampleInputPassword1" class="form-label">Description</label>
-    <input type="text" class="form-control" id="exampleInputPassword1">
-  </div>
+                <form @submit.prevent="create">
+                    <div class="mb-3">
+                      <label for="projectName" class="form-label">Project Name</label>
+                      <input type="text" class="form-control" id="projectName" v-model="name" aria-describedby="emailHelp" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="projectDescription" class="form-label">Description</label>
+                      <textarea class="form-control" id="projectDescription" v-model="details" required></textarea>
+                    </div>
 
-  <div class="mb-3">
-    <label for="exampleInputPassword1" class="form-label">Price</label>
-    <input type="text" class="form-control" id="exampleInputPassword1">
-  </div>
-  <div class="mb-3">
-    <label for="exampleInputPassword1" class="form-label">Status</label>
-    <input type="text" class="form-control" id="exampleInputPassword1">
-  </div>
+                    <div class="mb-3">
+                      <label for="projectTime" class="form-label">Time</label>
+                      <input type="text" class="form-control" id="projectTime" v-model="hour" required>
+                    </div>
 
-  <div class="mb-3">
-    <label for="exampleInputPassword1" class="form-label">Time</label>
-    <input type="text" class="form-control" id="exampleInputPassword1">
-  </div>
-  <div class="mb-3">
-  <label for="formFile" class="form-label">Add Image To Project </label>
-  <input class="form-control" type="file" id="formFile">
-</div>
-  <button type="submit" class="btn btn-primary">Create</button>
-</form>
-                
+                    <button type="submit" class="btn btn-primary">Create</button>
+                  </form>
 
+              
             </div>
             <!-- /.container-fluid --> 
         </div>
@@ -105,3 +93,59 @@ import '../../../assets/dashboard/vendor/jquery-easing/jquery.easing.min.js'
 import '../../../assets/dashboard/js/sb-admin-2.min.js'
 
 </script>
+
+<script>
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+
+
+export default {
+  data() {
+    return {
+      name: '',
+      details: '',
+      hour: '',
+    };
+  },
+  methods: {
+    
+  create() {
+    function getTokenFromCookie() {
+  const cookies = document.cookie.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].trim();
+    if (cookie.startsWith('token=')) {
+      return cookie.substring('token='.length, cookie.length);
+    }
+  }
+  return null;
+}
+
+// Usage
+const token = getTokenFromCookie();    console.log(token);
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer '+token,
+    };
+
+    axios.post('http://localhost:9000/projects', {
+      name: this.name,
+      details: this.details,
+      hour: this.hour,
+    }, { headers })
+      .then(response => {
+        console.log('Project created successfully', response.data);
+        // Handle success, e.g., show a success message or redirect
+        this.$router.push('/all-projects');
+
+      })
+      .catch(error => {
+        console.error('Error creating project', error.response.data);
+        // Handle error, e.g., display an error message
+      });
+  },
+},
+
+};
+</script>
+
