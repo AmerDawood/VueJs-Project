@@ -85,28 +85,8 @@ const projects = ref([]);
 // Fetch projects data from the server
 async function fetchProjects() {
   try {
-    // const token = localStorage.getItem('token');
     
-     function getTokenFromCookie() {
-  const cookies = document.cookie.split(';');
-  for (let i = 0; i < cookies.length; i++) {
-    const cookie = cookies[i].trim();
-    if (cookie.startsWith('token=')) {
-      return cookie.substring('token='.length, cookie.length);
-    }
-  }
-  return null;
-}
-
-// Usage
-const token = getTokenFromCookie();
-console.log(token);
-        const headers = {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token,
-        };
-    console.log(headers);
-    
+const token = localStorage.getItem('token');
 
 
     // Get the projects using the token in the request headers
@@ -119,6 +99,7 @@ console.log(token);
 
     console.log(response);
 
+
     projects.value = response.data.map(project => ({ ...project, isFound: true }));
   } catch (error) {
     // console.error(error);
@@ -128,19 +109,16 @@ console.log(token);
 // Delete a project
 async function deleteProject(projectId) {
   try {
-    function getTokenFromCookie() {
-  const cookies = document.cookie.split(';');
-  for (let i = 0; i < cookies.length; i++) {
-    const cookie = cookies[i].trim();
-    if (cookie.startsWith('token=')) {
-      return cookie.substring('token='.length, cookie.length);
-    }
-  }
-  return null;
-}
-
-// Usage
-const token = getTokenFromCookie();    
+    const token = localStorage.getItem('token');
+if (token) {
+  // Token exists in localStorage
+  console.log('Token:', token);
+  // Perform further actions with the token
+} else {
+  // Token doesn't exist in localStorage
+  console.log('Token not found');
+  // Handle the case where the token is not available
+}  
     // Make a DELETE request to the server with the project ID and token in the request headers
     await axios.delete(`http://localhost:9000/projects/${projectId}`,{
       headers: {

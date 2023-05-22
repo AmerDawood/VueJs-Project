@@ -6,6 +6,10 @@ import DashboardUser from "../views/user/Dashboard.vue";
 import SinglePageVue from "../views/website/SinglePage.vue";
 import FaqView from "../views/website/Faq.vue";
 import ContactView from "../views/website/Contact.vue";
+import Task from "../views/user/tasks/Task.vue";
+import UpdateTask from "../views/user/tasks/UpdateTask.vue";
+
+
 
 import AllProjects from "../views/user/project/AllProjects.vue"
 import AddProjects from "../views/user/project/AddProjects.vue"
@@ -81,6 +85,18 @@ const router = createRouter({
       path: "/add-task/:id",
       name: "AddTask",
       component: AddTask,
+    },
+
+    {
+      path: "/update-task/:id",
+      name: "UpdateTask",
+      component: UpdateTask,
+    },
+
+    {
+      path: "/single-task/:id",
+      name: "Task",
+      component: Task,
     },
   ],
 

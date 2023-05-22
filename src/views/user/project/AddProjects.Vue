@@ -110,29 +110,29 @@ export default {
   methods: {
     
   create() {
-    function getTokenFromCookie() {
-  const cookies = document.cookie.split(';');
-  for (let i = 0; i < cookies.length; i++) {
-    const cookie = cookies[i].trim();
-    if (cookie.startsWith('token=')) {
-      return cookie.substring('token='.length, cookie.length);
-    }
-  }
-  return null;
+    const token = localStorage.getItem('token');
+if (token) {
+  // Token exists in localStorage
+  console.log('Token:', token);
+  // Perform further actions with the token
+} else {
+  // Token doesn't exist in localStorage
+  console.log('Token not found');
+  // Handle the case where the token is not available
 }
-
-// Usage
-const token = getTokenFromCookie();    console.log(token);
     const headers = {
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer '+token,
+      Authorization: `Bearer `+token,
     };
 
     axios.post('http://localhost:9000/projects', {
       name: this.name,
       details: this.details,
       hour: this.hour,
-    }, { headers })
+    }, { 
+      headers: {
+        Authorization: `Bearer `+token,
+      },
+     })
       .then(response => {
         console.log('Project created successfully', response.data);
         // Handle success, e.g., show a success message or redirect

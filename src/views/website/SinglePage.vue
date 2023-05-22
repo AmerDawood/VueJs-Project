@@ -12,7 +12,7 @@
          
 
 
-       <JobStatus></JobStatus>
+       <!-- <JobStatus></JobStatus> -->
 
         </div>
      
@@ -33,9 +33,22 @@
               <h2 id="heading-2">{{ projects.details }}</h2>
     
             
-              <div v-for="task in projects.tasks" :key="task._id" class="notices info">
-                      <p>{{ task.title }}</p>
-                    </div>
+              <!-- <div>
+                  <div v-for="task in projects.tasks" :key="task._id" class="notices info" @click="goToScreen(task._id)">
+                    <p>{{ task.title }}</p>
+                  </div>
+              </div> -->
+
+              <div v-for="task in projects.tasks" :key="task._id" class="task-item">
+                <div class="title">
+                  <p>{{ task.title }}</p>
+                </div>
+                <div class="icons">
+                  <p @click="deleteTask(task._id)">Delete</p>
+
+                  <p @click="goToScreen(task._id)"> Show</p>
+                </div>
+              </div>
            
           
             </div>
@@ -61,6 +74,9 @@
 
 </body>
 </template>
+
+
+ 
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
@@ -78,24 +94,24 @@ import '../../assets/website/plugins/match-height/jquery.matchHeight-min.js';
 import '../../assets/website/assets/script.js';
 const projects = ref([]);
 
+
+
+
 // Fetch projects data from the server
 async function fetchProjects() {
   try {
     // const token = localStorage.getItem('token');
     
-     function getTokenFromCookie() {
-  const cookies = document.cookie.split(';');
-  for (let i = 0; i < cookies.length; i++) {
-    const cookie = cookies[i].trim();
-    if (cookie.startsWith('token=')) {
-      return cookie.substring('token='.length, cookie.length);
-    }
-  }
-  return null;
-}
-
-// Usage
-const token = getTokenFromCookie();
+    const token = localStorage.getItem('token');
+if (token) {
+  // Token exists in localStorage
+  console.log('Token:', token);
+  // Perform further actions with the token
+} else {
+  // Token doesn't exist in localStorage
+  console.log('Token not found');
+  // Handle the case where the token is not available
+}  
 console.log(token);
         const headers = {
           'Content-Type': 'application/json',
@@ -130,6 +146,32 @@ console.log(token);
     // console.error(error);
   }
 }
+// Delete a project
+async function deleteTask(taskId) {
+  try {
+    const token = localStorage.getItem('token');
+if (token) {
+  // Token exists in localStorage
+  console.log('Token:', token);
+  // Perform further actions with the token
+} else {
+  // Token doesn't exist in localStorage
+  console.log('Token not found');
+  // Handle the case where the token is not available
+}  
+    // Make a DELETE request to the server with the project ID and token in the request headers
+    await axios.delete(`http://localhost:9000/tasks/${taskId}`,{
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // Remove the deleted project from the projects list
+    projects.value = projects.value.filter(project => project._id !== projectId);
+  } catch (error) {
+    // Handle the error, e.g., display an error message or log the error
+  }
+}
 
 
 
@@ -138,3 +180,36 @@ onMounted(() => {
   fetchProjects();
 });
 </script>
+
+
+<script>
+
+export default {
+  methods: {
+    goToScreen(taskId) {
+      // Perform any necessary actions before navigating
+      // For example, you can pass the taskId as a parameter in the URL
+      this.$router.push('/single-task/' + taskId);
+    },
+
+    
+  },
+};
+</script>
+
+<style>
+.task-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.icons {
+  display: flex;
+}
+
+.icons i {
+  margin-right: 10px;
+}
+</style>
