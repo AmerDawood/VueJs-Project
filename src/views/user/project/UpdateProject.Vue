@@ -44,12 +44,12 @@
                       <textarea class="form-control" id="projectDescription" v-model="details" ></textarea>
                     </div>
 
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                       <label for="projectTime" class="form-label">Time</label>
                       <input type="text" class="form-control" id="projectTime" v-model="hour" >
-                    </div>
+                    </div> -->
 
-                    <button type="submit" class="btn btn-primary">Create</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
                   </form>
                 
 
@@ -97,10 +97,12 @@ import '../../../assets/dashboard/js/sb-admin-2.min.js'
 </script>
 
 
-
- <script>
-import { useRouter } from 'vue-router';
+<script>
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import axios from 'axios';
+
+
 const token = localStorage.getItem('token');
 if (token) {
   // Token exists in localStorage
@@ -110,37 +112,44 @@ if (token) {
   // Token doesn't exist in localStorage
   console.log('Token not found');
   // Handle the case where the token is not available
-}  
+}
 
 export default {
   data() {
+    // Use ref to create reactive properties
+    const name = ref('');
+    const details = ref('');
+    // const hour = ref('');
+
+    const route = useRoute();
+    const projectId = route.params.id;
+
     return {
-      name: '',
-      details: '',
-      hour: '',
+      projectId,
+      name,
+      details,
+      // hour,
     };
   },
-  
   methods: {
-    
-    
-    
-    updateProject(projectId) {
+    updateProject() {
       const headers = {
         'Content-Type': 'application/json',
-        Authorization: `Bearer `+token,
+        Authorization: 'Bearer ' + token,
+      };
+
+      const projectData = {
+        name: this.name,
+        details: this.details,
+        hour: this.hour,
       };
 
       axios
-        .put(`http://localhost:9000/projects/${projectId}`, {
-          name: this.name,
-          details: this.details,
-          hour: this.hour,
-        }, { headers })
+        .patch(`http://localhost:9000/projects/${this.projectId}`, projectData, { headers })
         .then(response => {
           console.log('Project updated successfully', response.data);
-          this.$router.push('/all-projects');
-
+          // Handle success, e.g., show a success message or redirect
+          this.$router.replace(`/all-projects`);
         })
         .catch(error => {
           console.error('Error updating project', error.response.data);
@@ -149,4 +158,4 @@ export default {
     },
   },
 };
-</script>  
+</script>

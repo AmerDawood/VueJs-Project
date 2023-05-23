@@ -19,10 +19,16 @@
         <div class="col-lg-9">
           <div class="p-lg-5 p-4 bg-white">
           
-            <button>
+            <!-- <button>
               <RouterLink :to="'/update-task/' + tasks._id" class="collapse-item">
                 Updat Task Status
             </RouterLink>
+            </button> -->
+
+            <button style="background-color: blue; color: black; height: 40px; width: 150px; border-radius: 5px; border: none; margin-bottom: 20px;margin-right: 450px;">
+              <RouterLink :to="'/update-task/' + tasks._id"  class="collapse-item" style="color:white">
+                Update Task Status
+              </RouterLink>
             </button>
 
 
@@ -36,6 +42,8 @@
             <div class="content">
               <h1 id="heading-1"> {{ tasks.title }} </h1>
               <h2 id="heading-2">{{ tasks.description }}</h2>
+              <h2 id="heading-2">Work Hour : {{ tasks.workHour }}</h2>
+
               <h5 id="heading-2"> Task Status : {{ tasks.status }}</h5>
 
     

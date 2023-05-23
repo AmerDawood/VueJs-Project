@@ -34,7 +34,7 @@
                           <tr>
                             <th>Name</th>
                             <th>Description</th>  
-                            <th>hour</th>  
+                            <!-- <th>hour</th>   -->
                             <th>More Details</th>
 
 
@@ -48,7 +48,7 @@
                           <tr v-for="project in projects" :key="project.id">
                             <td>{{ project.name }}</td>
                             <td>{{ project.details }}</td>
-                            <td>{{ project.hour }}</td>
+                            <!-- <td>{{ project.hour }}</td> -->
                             <td v-if="project.isFound">
                               <RouterLink :to="'/single-page/' + project._id" class="collapse-item">Details</RouterLink>
                             </td>
@@ -110,17 +110,24 @@ const token = localStorage.getItem('token');
 async function deleteProject(projectId) {
   try {
     const token = localStorage.getItem('token');
-if (token) {
-  // Token exists in localStorage
-  console.log('Token:', token);
-  // Perform further actions with the token
-} else {
-  // Token doesn't exist in localStorage
-  console.log('Token not found');
-  // Handle the case where the token is not available
-}  
+    if (token) {
+      // Token exists in localStorage
+      console.log('Token:', token);
+      // Perform further actions with the token
+    } else {
+      // Token doesn't exist in localStorage
+      console.log('Token not found');
+      // Handle the case where the token is not available
+    }
+
+    // Ask for confirmation before deleting the project
+    const confirmDelete = confirm('Are you sure you want to delete this project?');
+    if (!confirmDelete) {
+      return; // User cancelled the deletion
+    }
+
     // Make a DELETE request to the server with the project ID and token in the request headers
-    await axios.delete(`http://localhost:9000/projects/${projectId}`,{
+    await axios.delete(`http://localhost:9000/projects/${projectId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -132,6 +139,7 @@ if (token) {
     // Handle the error, e.g., display an error message or log the error
   }
 }
+
 
 // Fetch projects when the component is mounted
 onMounted(() => {

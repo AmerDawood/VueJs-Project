@@ -19,35 +19,50 @@
         <div class="col-lg-9">
           <div class="p-lg-5 p-4 bg-white">
           
-            <button>
-              <RouterLink :to="'/add-task/' + projects._id" class="collapse-item">
-                Add Task
-            </RouterLink>
-            </button>
+            <div style="display: flex; gap: 10px;">
+  <button style="background-color: blue; color: black; height: 40px; width: 150px; border-radius: 5px; border: none; margin-bottom: 20px;margin-right: 450px;">
+    <RouterLink :to="'/add-task/' + projects._id" class="collapse-item" style="color:white">
+      Add Task
+    </RouterLink>
+  </button>
+  <button style="background-color: green; color: white; height: 40px; width: 150px; border-radius: 5px; border: none;" @click="generatePDF">
+    Download PDF
+  </button>
+</div>
 
-
-          
+        
             <h2 class="mb-5">Job #{{ projects._id }}</h2>
             <div class="content">
               <h1 id="heading-1"> {{ projects.name }} </h1>
               <h2 id="heading-2">{{ projects.details }}</h2>
+
+
+              <h2 id="heading-2">Sum All Tasks : {{ projects.doneTasksWorkHourSum }}</h2>
+              <h2 id="heading-2">Price : {{ projects.doneTasksWorkHourSum }} * User Price</h2>
+
+
     
             
-              <!-- <div>
-                  <div v-for="task in projects.tasks" :key="task._id" class="notices info" @click="goToScreen(task._id)">
-                    <p>{{ task.title }}</p>
-                  </div>
-              </div> -->
 
               <div v-for="task in projects.tasks" :key="task._id" class="task-item">
                 <div class="title">
                   <p>{{ task.title }}</p>
                 </div>
-                <div class="icons">
+                <!-- <div class="icons">
                   <p @click="deleteTask(task._id)">Delete</p>
 
                   <p @click="goToScreen(task._id)"> Show</p>
-                </div>
+                </div> -->
+                <div class="icons">
+                <button style="background-color: red; color: white; height: 30px; width: 80px; border-radius: 5px; border: none; margin-right: 10px;" @click="deleteTask(task._id)">
+                  Delete
+                </button>
+
+                <button style="background-color: green; color: white; height: 30px; width: 80px; border-radius: 5px; border: none;" @click="goToScreen(task._id)">
+                  Show
+                </button>
+</div>
+
               </div>
            
           
@@ -81,6 +96,11 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
+
+
+import jsPDF from 'jspdf';
+
+
 import Header from '../../components/website/Header2.vue';
 import Footer from '../../components/website/Footer.vue';
 import JobStatus from '../../components/website/JobStatus.vue';
@@ -172,6 +192,27 @@ if (token) {
     // Handle the error, e.g., display an error message or log the error
   }
 }
+// Generate PDF
+function generatePDF() {
+  const doc = new jsPDF();
+
+  const { _id, name, details , doneTasksWorkHourSum , doneTasksCount} = projects.value;
+
+  const content = `
+    Project ID: ${_id}
+    Project Name: ${name}
+    Project Details: ${details}
+    Number Of Done Tasks : ${doneTasksCount}
+    Done Tasks Work Hour Sum : ${doneTasksWorkHourSum}
+
+  `;
+
+  doc.text(content, 10, 10);
+
+  doc.save('project_details.pdf');
+}
+
+
 
 
 
@@ -179,6 +220,7 @@ if (token) {
 onMounted(() => {
   fetchProjects();
 });
+
 </script>
 
 
@@ -191,6 +233,8 @@ export default {
       // For example, you can pass the taskId as a parameter in the URL
       this.$router.push('/single-task/' + taskId);
     },
+
+ 
 
     
   },

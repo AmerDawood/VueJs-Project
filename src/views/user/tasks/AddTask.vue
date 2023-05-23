@@ -54,7 +54,7 @@
 
                     <div class="mb-3">
                       <label for="projectTime" class="form-label">Work Hour</label>
-                      <input type="text" class="form-control" id="projectTime" v-model="hour" required>
+                      <input type="text" class="form-control" id="projectTime" v-model="workHour" required>
                     </div>
 
                     <div class="mb-3">
@@ -129,15 +129,18 @@ export default {
     const projectId = route.params.id;
 
     return {
-      projectId,
-      title: '',
-      description: '',
-      priority: '',
-      hour: '',
-      status: '',
-    };
+    projectId,
+    title: '',
+    description: '',
+    priority: '',
+    status: '',
+    workHour: '',
+  };
   },
+
+
   methods: {
+    
     create() {
       const headers = {
         'Content-Type': 'application/json',
@@ -149,7 +152,7 @@ export default {
           title: this.title,
           description: this.description,
           priority: this.priority,
-          hour: this.hour,
+          workHour: this.workHour,
           status: this.status,
         }, { headers })
         .then(response => {

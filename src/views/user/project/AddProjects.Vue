@@ -47,10 +47,10 @@
                       <textarea class="form-control" id="projectDescription" v-model="details" required></textarea>
                     </div>
 
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                       <label for="projectTime" class="form-label">Time</label>
                       <input type="text" class="form-control" id="projectTime" v-model="hour" required>
-                    </div>
+                    </div> -->
 
                     <button type="submit" class="btn btn-primary">Create</button>
                   </form>
@@ -104,7 +104,7 @@ export default {
     return {
       name: '',
       details: '',
-      hour: '',
+      // hour: '',
     };
   },
   methods: {
@@ -127,7 +127,7 @@ if (token) {
     axios.post('http://localhost:9000/projects', {
       name: this.name,
       details: this.details,
-      hour: this.hour,
+      // hour: this.hour,
     }, { 
       headers: {
         Authorization: `Bearer `+token,
